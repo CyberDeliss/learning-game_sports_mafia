@@ -1,5 +1,7 @@
 #include "day.h"
 #include "ui_day.h"
+#include "gamers.h"
+
 
 Day::Day(QWidget *parent)
     : QMainWindow(parent)
@@ -8,19 +10,14 @@ Day::Day(QWidget *parent)
     ui->setupUi(this);
 }
 
+
 Day::~Day()
 {
     delete ui;
 }
 
-
-
-
-
-
 void Day::on_buttonVote_clicked()
 {
-    int i = 0;
 
 
     ui->gamer_1->setFrameShape(QFrame::Panel);

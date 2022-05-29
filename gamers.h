@@ -1,23 +1,25 @@
 #ifndef GAMERS_H
 #define GAMERS_H
+#include <QTextStream>
 
 enum class Side{
     RED,
     MAFIA
 };
 
-enum class Role
-{   RED = 1,
+enum class Role {
+    RED = 1,
     POLICMAN = 2,
     DON = 3,
     MAFIA = 4
 };
 
-enum class Id {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN };
+enum Id {ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN };
 
 
 class Gamer{
     Id m_id; //номер игрока за столом
+    QString m_name; //ник игрока
     int m_penalty; //количество предупреждений и штрафов у игрока
     bool m_vote; // был ли выставлен кто-то на голосование этим игроком
     Id m_vote_id; // номер игрока выставленного на голосование
@@ -28,6 +30,7 @@ class Gamer{
 public:
     Gamer(){ //конструктор по-умолчанию
         m_id = Id::ZERO;
+        m_name = "";
         m_penalty = 0;
         m_vote = false;
         m_vote_id = Id::ZERO;
@@ -38,6 +41,7 @@ public:
 
     Gamer(Id id){ //конструктор с номером игрока
         m_id = id;
+        m_name = "";
         m_penalty = 0;
         m_vote = false;
         m_vote_id = Id::ZERO;
@@ -46,9 +50,23 @@ public:
         m_side = Side::RED;
     }
 
+    Gamer (Id id, Role role, QString name){
+        m_id = id;
+        m_name = name;
+        m_penalty = 0;
+        m_vote = false;
+        m_vote_id = Id::ZERO;
+        m_active = false;
+        setRole(role);
+    }
+
 
     Id getId() { return m_id; }
-    void setId(Id id) { m_id = id; }
+    void setId(Id id) { m_id = id; }    
+
+    QString getName() { return m_name; }
+    void setName(QString name) { m_name = name; }
+
 
     int getPenalty() { return m_penalty; }
     void setPenalty(int penalty) { m_penalty = penalty; }
@@ -72,6 +90,31 @@ public:
     }
 
     Side getSide() {return m_side;}   // проверить потом используется ли m_side вообще
+
+
+
+    QString printAll(){
+        QString print_temp = "";
+        print_temp = print_temp + "Id= " + QString::number(m_id) + " Name=" + getName() + " Penalty=" +QString::number(m_penalty);
+
+        if (m_vote){
+            print_temp = print_temp + " Vote= true it is:" + QString::number(m_vote_id);
+        }
+        else{
+            print_temp = print_temp + " Vote= false";
+        }
+        if (m_active){
+            print_temp = print_temp + " Active= true";
+        }
+        else{
+            print_temp = print_temp + " Active= false";
+        }
+
+        print_temp = print_temp + " Role= " + QString::number(static_cast<int>(m_role)) + " Side= " + QString::number(static_cast<int>(m_side));
+        return print_temp;
+
+    }
+
 };
 
 
@@ -94,6 +137,13 @@ public:
         m_shooting = 0;
         m_shooting_id = Id::ZERO;
         setRole(Role::MAFIA);
+    }
+    Mafia (Id id, Role role, QString name){
+        setId(id);
+        setName(name);
+        m_shooting = 0;
+        m_shooting_id = Id::ZERO;
+        setRole(role);
     }
 
     int getShooting() {return m_shooting;}
@@ -124,6 +174,13 @@ public:
         m_check = false;
         m_check_id = Id::ZERO;
         setRole(Role::DON);
+    }
+    Don(Id id, Role role, QString name){
+        setId(id);
+        setName(name);
+        m_check = false;
+        m_check_id = Id::ZERO;
+        setRole(role);
     }
 
     bool getCheck() {return m_check;}
@@ -157,6 +214,13 @@ public:
         setRole(Role::POLICMAN);
     }
 
+    Policman(Id id, Role role, QString name){
+        setId(id);
+        setName(name);
+        m_check = false;
+        m_check_id = Id::ZERO;
+        setRole(role);
+    }
 
     bool getCheck() {return m_check;}
     void setCheck(bool check){m_check=check;}
@@ -167,6 +231,8 @@ public:
     void checkIdReset() {m_check_id = Id::ZERO;}
 
 };
+
+
 
 
 #endif // GAMERS_H

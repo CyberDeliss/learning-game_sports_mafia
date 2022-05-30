@@ -1,4 +1,5 @@
 QT       += core gui
+QT += qml quick sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,18 +13,21 @@ SOURCES += \
     login.cpp \
     main.cpp \
     day.cpp \
-    night.cpp
+    night.cpp \
+    reg_window.cpp
 
 HEADERS += \
     gamers.h \
     day.h \
     login.h \
-    night.h
+    night.h \
+    reg_window.h
 
 FORMS += \
     day.ui \
     login.ui \
-    night.ui
+    night.ui \
+    reg_window.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

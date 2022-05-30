@@ -1,15 +1,13 @@
-#include "day.h"
 #include "login.h"
 #include "ui_login.h"
-#include "gamers.h"
 #include <QApplication>
 
-Gamer *gamer = nullptr;
 
 Login::Login(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Login)
 {
+    gamer = nullptr;
     ui->setupUi(this);
 }
 
@@ -47,12 +45,7 @@ Role getRandomRole(){
 
 void Login::on_buttonStart_clicked()
 {
-//    int m_intRole = ui->label_role->text().toInt();
-
-
-    QWidget *day = new Day();
-    day->show();
-    this->close();
+    emit login_button_clicked();
 }
 
 QString printRole(Role role){
@@ -114,6 +107,7 @@ void Login::on_buttonGetRole_clicked(){
          }
 
         ui->lineEditName->setEnabled(false);
+        ui->lineEditPassword->setEnabled(false);
         ui->buttonStart->setEnabled(true);
         ui->label_role->setText(printRole(m_myRole));
         ui->label_id->setText(QString::number(m_myId));
@@ -131,6 +125,30 @@ void Login::on_buttonGetRoleCancel_clicked()
     ui->label_3->setText("");
     ui->buttonStart->setEnabled(false);
     ui->lineEditName->setEnabled(true);
+    ui->lineEditPassword->setEnabled(true);
     ui->label_role->setText("Ваша роль:");
     ui->label_id->setText("Ваш номер:");
 }
+
+void Login::on_lineEditName_textEdited(const QString &arg1)
+{
+    Login::m_username = arg1;
+}
+
+
+void Login::on_lineEditPassword_textEdited(const QString &arg1)
+{
+    Login::m_userpass = arg1;
+}
+
+
+QString Login::getLogin() {return m_username;}
+
+QString Login::getPass() {return m_userpass;}
+
+
+void Login::on_buttonRegister_clicked()
+{
+    emit register_button_clicked();
+}
+

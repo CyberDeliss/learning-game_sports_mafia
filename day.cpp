@@ -8,6 +8,10 @@ Day::Day(QWidget *parent)
     user_counter = 0;
     m_loginSuccesfull = false;
 
+    for(int i =0;i<10;i++){
+        m_gamer[i] = nullptr;    //обнуление адреса
+    }
+
     QString userpass = "";
 
 
@@ -32,10 +36,13 @@ Day::Day(QWidget *parent)
 
     QSqlQuery query;
 
+    // userlist(number, name, pass, winr, winb)"
     db_input = "CREATE TABLE userlist ( "
                "number INTEGER PRIMARY KEY NOT NULL,"
-               "name VARCHAR(20), "
-               "pass VARCHAR(12) );" ;
+               "name VARCHAR(20), "     // увеличить до 20 символов name
+               "pass VARCHAR(12), "     // добавить проверку на длину пароля
+               "winr INTEGER, "         // побед за красного игрока или комиссара
+               "winb INTEGER );" ;      // побед за мафию
 
     if(!query.exec(db_input))
     {
@@ -52,21 +59,24 @@ Day::~Day()
     if(m_loginSuccesfull)
     {
         QString str_t = "UPDATE userlist "
-                        "SET xpos = %2, ypos = %3, width = %4, length = %5 "
+                        "SET winr = %2, winb = %3 "
                         "WHERE name = '%1';";
-//        db_input = str_t .arg(m_username)
-//                         .arg(this->x())
-//                         .arg(this->y())
-//                         .arg(this->width())
-//                         .arg(this->height());
-//        QSqlQuery query;
-//        if(!query.exec(db_input))
-//        {
-//            qDebug() << "Unable to insert data"  << query.lastError() << " : " << query.lastQuery() ;
-//        }
+        db_input = str_t .arg(m_username)
+                         .arg(1)            //сюда передавать данные о победах!
+                         .arg(1);
+        QSqlQuery query;
+        if(!query.exec(db_input))
+        {
+            qDebug() << "Unable to insert data"  << query.lastError() << " : " << query.lastQuery() ;
+        }
     }
-//    mw_db.removeDatabase("authorisation");
-//    qDebug() << "MainWindow Destroyed";
+    mw_db.removeDatabase("authorisation");
+    qDebug() << "MainWindow Destroyed";
+
+    for(int i =0;i<10;i++){
+        delete m_gamer[i];       //освобождение памяти по адресу
+        m_gamer[i] = nullptr;    //обнуление адреса
+    }
 
     delete ui_Main;
 }
@@ -165,12 +175,14 @@ void Day::registerUser()
         m_username = ui_Reg.getName();
         m_userpass = ui_Reg.getPass();
         user_counter++;
-        str_t = "INSERT INTO userlist(number, name, pass)"
-                "VALUES(%1, '%2', '%3');";
+        str_t = "INSERT INTO userlist(number, name, pass, winr, winb)"
+                "VALUES(%1, '%2', '%3', '%4', '%5');";
 
         db_input = str_t .arg(user_counter)
                          .arg(m_username)
-                         .arg(m_userpass);
+                         .arg(m_userpass)
+                        .arg(0)
+                        .arg(0);
 
         if(!query.exec(db_input))
         {
@@ -191,6 +203,9 @@ void Day::registerUser()
 
 void Day::authorizeUser()
 {
+    int winR = 0;   // побед за мирного игрока или комиссара
+    int winB = 0;   // побед за мафию или дона
+
     m_username = ui_Auth.getLogin();
     m_userpass = ui_Auth.getPass();
 
@@ -202,6 +217,7 @@ void Day::authorizeUser()
     QString username = "";
     QString userpass = "";
 
+
     db_input = str_t.arg(m_username);
 
     QSqlQuery query;
@@ -211,6 +227,7 @@ void Day::authorizeUser()
     {
         qDebug() << "Unable to execute query - exiting" << query.lastError() << " : " << query.lastQuery();
     }
+
     rec = query.record();
     query.next();
     user_counter = query.value(rec.indexOf("number")).toInt();
@@ -225,11 +242,16 @@ void Day::authorizeUser()
     else
     {
         m_loginSuccesfull = true;
+        winR = query.value(rec.indexOf("winr")).toInt();
+        winB = query.value(rec.indexOf("winb")).toInt();
 
+        m_gamer[ui_Auth.getGamer()->getId()] = ui_Auth.getGamer();
         ui_Auth.close();
         ui_Reg.close();
 
+        ui_Main->labelAboutMe->setText(m_gamer[ui_Auth.getGamer()->getId()]->printAll());
         this->show();
+
     }
 }
 

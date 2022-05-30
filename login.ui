@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Log In</string>
+    <string>Get role</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lineEditName">

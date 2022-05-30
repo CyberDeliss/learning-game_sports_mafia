@@ -35,7 +35,6 @@ private slots:
 
 private:
     Ui::Day *ui_Main;
-
     Login ui_Auth;      // экземпляры окна авторизации и окна регистрации
     reg_window ui_Reg;  // принадлежат главному окну
 
@@ -48,5 +47,8 @@ private:
 
     int user_counter;   // счетчик пользователей
     bool m_loginSuccesfull; // флаг успешной авторизации
+
+
+    Gamer *m_gamer[10];
 };
 #endif // DAY_H

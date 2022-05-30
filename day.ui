@@ -329,11 +329,26 @@
        <height>41</height>
       </rect>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
      <property name="text">
       <string>4</string>
      </property>
+     <property name="textFormat">
+      <enum>Qt::AutoText</enum>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse</set>
      </property>
     </widget>
     <widget class="QLabel" name="gamer_8">
@@ -597,12 +612,18 @@
       <rect>
        <x>600</x>
        <y>30</y>
-       <width>141</width>
-       <height>101</height>
+       <width>71</width>
+       <height>331</height>
       </rect>
      </property>
+     <property name="inputMethodHints">
+      <set>Qt::ImhNone</set>
+     </property>
      <property name="text">
-      <string>TextLabel</string>
+      <string>Text Label</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLCDNumber" name="lcdNumber">

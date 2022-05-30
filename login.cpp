@@ -7,25 +7,27 @@ Login::Login(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Login)
 {
-    gamer = nullptr;
+    m_gamer = nullptr;
     ui->setupUi(this);
 }
 
 Login::~Login()
 {
+    delete m_gamer;       //освобождение памяти по адресу
+    m_gamer = nullptr;    //обнуление адреса
     delete ui;
 }
 
-enum loginResult {
+enum textResult {
     SUCCESS = 0,
-    ERROR_LENGHT_NAME = -1, //слишком длинное имя пользователя
-    ERROR_NEED_NAME = -2, // нужно заполнить имя
+    ERROR_LENGHT_NAME = -1, //слишком длинная строка
+    ERROR_NEED_NAME = -2, // пустая строка
 };
 
-loginResult readLogin(QString m_login){
-    if (m_login.length() > 10)
+textResult readText(QString text){
+    if (text.length() > 20)
         return ERROR_LENGHT_NAME;
-    if (m_login == "")
+    if (text == "")
         return ERROR_NEED_NAME;
     return SUCCESS; // если всё прошло успешно
 }
@@ -86,48 +88,57 @@ Gamer *getStructGamer(Id id, Role role, QString name) {
     }
 }
 
+Gamer * Login::getGamer(){
+    return m_gamer;
+}
+
 
 void Login::on_buttonGetRole_clicked(){
 
     QString m_myName = ui->lineEditName->text();
 
-    if (readLogin(ui->lineEditName->text()) == SUCCESS)
+    if (readText(ui->lineEditName->text()) == SUCCESS)
     {
-        Role m_myRole = getRandomRole(); //TODO в будущем реализовать нормальную раздачу ролей игрокам.
-        Id m_myId = getRandomId();       //TODO в будущем реализовать нормальную раздачу ID игрокам.
+        if (readText(ui->lineEditPassword->text()) == SUCCESS)
+        {
+            Role m_myRole = getRandomRole(); //TODO в будущем реализовать нормальную раздачу ролей игрокам.
+            Id m_myId = getRandomId();       //TODO в будущем реализовать нормальную раздачу ID игрокам.
 
-        if (m_myId != ZERO){
-            if (!gamer){
-                gamer= getStructGamer(m_myId, m_myRole, m_myName);
+            if (m_myId != ZERO){
+                if (!m_gamer){
+                    m_gamer= getStructGamer(m_myId, m_myRole, m_myName);
 
-            }else{
-                delete gamer;
-                gamer= getStructGamer(m_myId, m_myRole, m_myName);
-            }
-         }
+                }else{
+                    delete m_gamer;
+                    m_gamer= getStructGamer(m_myId, m_myRole, m_myName);
+                }
+             }
 
-        ui->lineEditName->setEnabled(false);
-        ui->lineEditPassword->setEnabled(false);
-        ui->buttonStart->setEnabled(true);
-        ui->label_role->setText(printRole(m_myRole));
-        ui->label_id->setText(QString::number(m_myId));
-    }
-    else{
-        ui->label_3->setText("Не корректно");
+            ui->lineEditName->setEnabled(false);
+            ui->lineEditPassword->setEnabled(false);
+            ui->buttonStart->setEnabled(true);
+            ui->label_role->setText(printRole(m_myRole));
+            ui->label_id->setText(QString::number(m_myId));
+        }
+        else{
+            ui->label_3->setText("Не корректно");
+        }
     }
 }
 
 void Login::on_buttonGetRoleCancel_clicked()
 {
-    delete gamer;       //освобождение памяти по адресу
-    gamer = nullptr;    //обнуление адреса
+    delete m_gamer;       //освобождение памяти по адресу
+    m_gamer = nullptr;    //обнуление адреса
 
     ui->label_3->setText("");
     ui->buttonStart->setEnabled(false);
     ui->lineEditName->setEnabled(true);
     ui->lineEditPassword->setEnabled(true);
-    ui->label_role->setText("Ваша роль:");
-    ui->label_id->setText("Ваш номер:");
+    ui->label_role->setText("role");
+    ui->label_id->setText("id");
+    ui->lineEditName->setText("");
+    ui->lineEditPassword->setText("");
 }
 
 void Login::on_lineEditName_textEdited(const QString &arg1)

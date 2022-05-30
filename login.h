@@ -17,7 +17,7 @@ public:
     ~Login();
     QString getLogin();
     QString getPass();
-
+    Gamer* getGamer();
 
 
 signals:
@@ -37,11 +37,12 @@ private slots:
 
     void on_buttonRegister_clicked();
 
+
 private:
     Ui::Login *ui;
     QString m_username;
     QString m_userpass;
-    Gamer *gamer;
+    Gamer *m_gamer;
 };
 
 #endif // LOGIN_H
